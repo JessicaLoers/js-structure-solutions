@@ -2,6 +2,31 @@ import { cards } from '../../utils/cardsData.js';
 import Card from '../Card/Card.js';
 
 export default function Form() {
+  function handleFormSubmit(event) {
+    event.preventDefault();
+
+    const formData = new FormData(event.target);
+    const data = Object.fromEntries(formData);
+
+    const newCard = {
+      question: data.question,
+      answer: data.answer,
+      tags: data.tags.split(','),
+      isBookmarked: false,
+    };
+
+    // ✨ unshift() Array Method is used to add one or more elements to the beginning of an array.
+    cards.unshift(newCard);
+
+    // To prevent the need to rerender, we add the new card to the DOM directly
+    const cardList = document.querySelector('.card-list');
+    const newCardElement = Card(newCard);
+    cardList.prepend(newCardElement);
+
+    event.target.reset();
+    event.target.elements.question.focus();
+  }
+
   const form = document.createElement('form');
   form.classList.add('form');
   form.innerHTML = /* html */ `
@@ -48,29 +73,4 @@ export default function Form() {
   form.addEventListener('submit', handleFormSubmit);
 
   return form;
-}
-
-function handleFormSubmit(event) {
-  event.preventDefault();
-
-  const formData = new FormData(event.target);
-  const data = Object.fromEntries(formData);
-
-  const newCard = {
-    question: data.question,
-    answer: data.answer,
-    tags: data.tags.split(','),
-    isBookmarked: false,
-  };
-
-  // ✨ unshift() Array Method is used to add one or more elements to the beginning of an array.
-  cards.unshift(newCard);
-
-  // To prevent the need to rerender, we add the new card to the DOM directly
-  const cardList = document.querySelector('.card-list');
-  const newCardElement = Card(newCard);
-  cardList.prepend(newCardElement);
-
-  event.target.reset();
-  event.target.elements.question.focus();
 }
